@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <title>CRUD Application</title>
+</head>
+<body>
+
+<div class="container mt-4">
+  <h2>CRUD Application</h2>
+
+  <!-- Add Data Form -->
+  <form id="addForm">
+    <div class="form-group">
+      <label for="nama">Nama:</label>
+      <input type="text" class="form-control" id="nama" required>
+    </div>
+    <div class="form-group">
+      <label for="nrp">NRP:</label>
+      <input type="text" class="form-control" id="nrp" required>
+    </div>
+    <div class="form-group">
+      <label for="kelas">Kelas:</label>
+      <input type="text" class="form-control" id="kelas" required>
+    </div>
+    <div class="form-group">
+      <label for="semester">Semester:</label>
+      <input type="number" class="form-control" id="semester" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Tambah Data</button>
+  </form>
+
+  <hr>
+
+  <!-- Data Table -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>NRP</th>
+        <th>Kelas</th>
+        <th>Semester</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="dataTableBody">
+      <!-- Data will be dynamically added here -->
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  // Sample JavaScript code for CRUD operations using Axios
+  // function deleteData(){
+    
+  // }
+  // Function to fetch and display data
+  function fetchData() {
+    axios.get('/api/mahasiswa')
+      .then(response => {
+        const dataTableBody = document.getElementById('dataTableBody');
+        dataTableBody.innerHTML = '';
+
+        response.data.forEach(data => {
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+            <td>${data.nama}</td>
+            <td>${data.nrp}</td>
+            <td>${data.kelas}</td>
+            <td>${data.semester}</td>
+            <td>
+              <a href="/edit/${data._id}" class="btn btn-warning btn-sm" id="editBtn">Edit</a>
+              <a href="/delete/${data._id}" met class="btn btn-danger btn-sm" id="deleteBtn" onclick="
+              ">Delete</a>
+            </td>
+          `;
+          dataTableBody.appendChild(newRow);
+        });
+      })
+      .catch(error => console.error(error));
+  }
+// document.getElementById('editBtn').addEventListener()
+
+// Event listener for the form submission
+  document.getElementById('addForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  const nama = document.getElementById('nama').value;
+  const nrp = document.getElementById('nrp').value;
+  const kelas = document.getElementById('kelas').value;
+  const semester = document.getElementById('semester').value;
+
+  // Perform Axios POST request to add data to the server
+  axios.post('/api/mahasiswa', { nama, nrp, kelas, semester })
+    .then(() => {
+      // Fetch and display updated data after adding
+      fetchData();
+
+      // Clear the form
+      this.reset(); // Use 'this.reset()' instead of 'addForm.reset()'
+    })
+    .catch(error => console.error(error));
+});
+
+
+  // Fetch and display initial data
+  fetchData();
+</script>
+
+</body>
+</html>
